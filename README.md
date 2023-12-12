@@ -15,5 +15,4 @@ pillow
 probably some other shit I forgot, if it whines about a missing library when you go to run it, just install it.
 
 # Known issue
-
-choosing a filename doesnt work, always saves as generated.gif
+ Generated gif display will corrupt after saving or accumulating frames, internal frames are still consistent, only display is jacked up.
