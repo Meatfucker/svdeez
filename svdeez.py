@@ -52,9 +52,9 @@ class SvdeezGUI(customtkinter.CTk):
         self.fps_entry.grid(row=2, column=1, padx=5, pady=5, sticky="e")
 
         self.motion_bucket_id_label = customtkinter.CTkLabel(self, text="Bucket:")
-        self.motion_bucket_id_label.grid(row=3, column=0, padx=5, pady=5, sticky="w")
+        self.motion_bucket_id_label.grid(row=4, column=0, padx=5, pady=5, sticky="w")
         self.motion_bucket_id_entry = customtkinter.CTkEntry(self, placeholder_text=self.motion_bucket_id)
-        self.motion_bucket_id_entry.grid(row=3, column=0, padx=5, pady=5, sticky="e")
+        self.motion_bucket_id_entry.grid(row=4, column=0, padx=5, pady=5, sticky="e")
 
         self.decode_chunk_label = customtkinter.CTkLabel(self, text="Chunk:")
         self.decode_chunk_label.grid(row=3, column=0, padx=5, pady=5, sticky="w")
