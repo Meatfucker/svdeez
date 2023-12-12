@@ -25,14 +25,14 @@ class SvdeezGUI(customtkinter.CTk):
         self.accumulated_frames = []
         self.savepath = "generate.gif"
 
-        placeholder_image = Image.new("RGB", (1024, 576), color="darkgray")
+        placeholder_image = Image.new("RGB", (1024, 576), color="#181818")
         self.display_photo = customtkinter.CTkImage(light_image=placeholder_image, dark_image=placeholder_image, size=(800, 461))
 
-        self.image_label = customtkinter.CTkLabel(self)  # Label to display the image
+        self.image_label = customtkinter.CTkLabel(self, text="")  # Label to display the image
         self.image_label.grid(row=0, column=0, padx=5, pady=5, sticky="ew", columnspan=2)
         self.image_label.configure(image=self.display_photo)
 
-        self.gif_label = customtkinter.CTkLabel(self)
+        self.gif_label = customtkinter.CTkLabel(self, text="")
         self.gif_label.grid(row=0, column=2, padx=5, pady=5, sticky="ew", columnspan=2)
         self.gif_label.configure(image=self.display_photo)
 
@@ -145,18 +145,15 @@ class SvdeezGUI(customtkinter.CTk):
 
     def display_frames_as_gif(self):
         if self.frames and self.fps:
-
-
             def update_label(index):
                 if index < len(self.frames):
                     frame = self.frames[index]
                     photo = customtkinter.CTkImage(light_image=frame, dark_image=frame, size=(800, 461))
                     self.gif_label.configure(image=photo)
-                    self.gif_label.image = photo  # Keep a reference to avoid garbage collection
+                    self.gif_label.image = photo
                     self.after(int(1000 / self.fps), update_label, index + 1)
                 else:
                     update_label(0)
-
             update_label(0)
 
 svdeez = SvdeezGUI()
