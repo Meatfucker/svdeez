@@ -51,12 +51,12 @@ class SvdeezGUI(customtkinter.CTk):
         self.fps_entry = customtkinter.CTkEntry(self, placeholder_text=self.fps)
         self.fps_entry.grid(row=2, column=1, padx=5, pady=5, sticky="e")
 
-        self.motion_bucket_id_label = customtkinter.CTkLabel(self, text="Bucket:")
+        self.motion_bucket_id_label = customtkinter.CTkLabel(self, text="Motion strength 1-255:")
         self.motion_bucket_id_label.grid(row=4, column=0, padx=5, pady=5, sticky="w")
         self.motion_bucket_id_entry = customtkinter.CTkEntry(self, placeholder_text=self.motion_bucket_id)
         self.motion_bucket_id_entry.grid(row=4, column=0, padx=5, pady=5, sticky="e")
 
-        self.decode_chunk_label = customtkinter.CTkLabel(self, text="Chunk:")
+        self.decode_chunk_label = customtkinter.CTkLabel(self, text="Decode frames:")
         self.decode_chunk_label.grid(row=3, column=0, padx=5, pady=5, sticky="w")
         self.decode_chunk_entry = customtkinter.CTkEntry(self, placeholder_text=self.decode_chunk_size)
         self.decode_chunk_entry.grid(row=3, column=0, padx=5, pady=5, sticky="e")
@@ -96,7 +96,6 @@ class SvdeezGUI(customtkinter.CTk):
         user_motion_bucket_id = self.motion_bucket_id_entry.get()
         user_decode_chunk = self.decode_chunk_entry.get()
         user_noise = self.noise_aug_entry.get()
-        user_save_name = self.save_name_entry.get()
 
         if user_seed:
             self.seed = int(user_seed)
@@ -108,17 +107,24 @@ class SvdeezGUI(customtkinter.CTk):
             self.decode_chunk_size = int(user_decode_chunk)
         if user_noise:
             self.noise_aug_strength = float(user_noise)
-        if user_save_name:
-            self.savepath = f"{user_save_name}.gif"
 
         generator = torch.manual_seed(self.seed)
         self.frames = self.svd_pipe(self.image, decode_chunk_size=self.decode_chunk_size, generator=generator, motion_bucket_id=self.motion_bucket_id, noise_aug_strength=self.noise_aug_strength).frames[0]
-        self.display_frames_as_gif()
+
+        self.gif_label.image = None
+        self.display_frames_as_gif(reset=True)
+
+
 
 
 
     def save_gif(self):
+        self.update_idletasks()
+        user_save_name = self.save_name_entry.get()
+        if user_save_name:
+            self.savepath = f"{user_save_name}.gif"
         self.accumulated_frames[0].save(self.savepath, save_all=True, append_images=self.accumulated_frames[1:], optimize=False, duration=int(1000 / self.fps), loop=0)
+        self.update_idletasks()
 
     def clear_frames(self):
         self.accumulated_frames = []
@@ -130,7 +136,7 @@ class SvdeezGUI(customtkinter.CTk):
 
     def load_last_frame(self):
         if self.frames:
-            self.image = self.frames[-2]  # Accessing the last image in the list
+            self.image = self.frames[-1]  # Accessing the last image in the list
             self.display_photo = customtkinter.CTkImage(light_image=self.image, dark_image=self.image, size=(800, 461))
             self.image_label.configure(image=self.display_photo)
 
@@ -143,7 +149,11 @@ class SvdeezGUI(customtkinter.CTk):
             self.display_photo = customtkinter.CTkImage(light_image=self.image, dark_image=self.image, size=(800, 461))
             self.image_label.configure(image=self.display_photo)
 
-    def display_frames_as_gif(self):
+    def display_frames_as_gif(self, reset=False):
+        if reset:
+            # Reset GIF playback to the first frame
+            self.gif_label.configure(image=self.display_photo)
+            self.gif_label.image = self.display_photo
         if self.frames and self.fps:
             def update_label(index):
                 if index < len(self.frames):
@@ -155,6 +165,7 @@ class SvdeezGUI(customtkinter.CTk):
                 else:
                     update_label(0)
             update_label(0)
+
 
 svdeez = SvdeezGUI()
 svdeez.mainloop()
