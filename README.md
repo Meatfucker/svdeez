@@ -1,7 +1,7 @@
 # svdeez
 
-A simple gui to interact with Stable Video Diffusion. Image goes up top, gif comes out bottom.
-
+A simple gui to interact with Stable Video Diffusion. Image goes on left, gif comes out on right. If you like the output hit accumulate to gather those frames.
+ 
 # Requirements
 
 python 3.10
